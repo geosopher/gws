@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useStore } from '../context/StoreContext';
+import { CATEGORIES } from '../data/products';
 import { 
   Search, 
   Heart, 
@@ -36,6 +37,7 @@ export const Navbar: React.FC = () => {
     setView('shop');
     setMobileMenuOpen(false);
     setMegaMenuOpen(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -280,82 +282,85 @@ export const Navbar: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* Mobile Drawer Menu */}
+      {/* Mobile Floating Dropdown Overlay Menu */}
       <AnimatePresence>
         {mobileMenuOpen && (
-          <motion.div 
-            initial={{ opacity: 0, x: -300 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -300 }}
-            transition={{ duration: 0.3 }}
-            className="fixed inset-0 top-20 bg-white z-50 lg:hidden overflow-y-auto px-6 py-8"
-          >
-            <div className="flex flex-col gap-6">
-              <div className="flex items-center justify-between pb-4 border-b border-neutral-200">
-                <span className="font-heading font-bold text-lg text-[#6A1B9A]">Navigation Menu</span>
-                <button onClick={() => setMobileMenuOpen(false)} className="p-2 text-neutral-500">
-                  <X className="w-6 h-6" />
+          <>
+            {/* Backdrop */}
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.5 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMobileMenuOpen(false)}
+              className="fixed inset-0 bg-black/60 z-40 lg:hidden"
+            />
+            {/* Floating Dropdown Card */}
+            <motion.div 
+              initial={{ opacity: 0, y: -20, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -20, scale: 0.95 }}
+              transition={{ duration: 0.2 }}
+              className="absolute top-20 left-4 right-4 bg-white rounded-2xl shadow-2xl border border-neutral-200 z-50 lg:hidden overflow-hidden max-h-[85vh] flex flex-col"
+            >
+              <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-100 bg-neutral-50/50">
+                <div className="flex items-center gap-3">
+                  <img src="https://i.ibb.co/BHsL2Bcy/wealth-logo.png" alt="Global Wealth Store" className="h-7 w-auto object-contain" />
+                  <span className="font-heading font-bold text-base text-[#6A1B9A]">Navigation Menu</span>
+                </div>
+                <button onClick={() => setMobileMenuOpen(false)} className="p-1.5 text-neutral-500 hover:text-neutral-800 rounded-full bg-neutral-100">
+                  <X className="w-5 h-5" />
                 </button>
               </div>
 
-              <div className="flex flex-col gap-4">
+              <div className="overflow-y-auto px-6 py-4 flex flex-col gap-2">
                 <button 
-                  onClick={() => { setView('home'); setMobileMenuOpen(false); }} 
-                  className="text-left font-medium text-lg text-neutral-800 py-2 border-b border-neutral-100"
+                  onClick={() => { setView('home'); setMobileMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }} 
+                  className="text-left font-semibold text-sm text-neutral-900 py-3 px-4 rounded-xl bg-neutral-50 hover:bg-neutral-100 flex items-center justify-between"
                 >
-                  Home
+                  <span>🏠 Home</span>
+                  <span className="text-xs text-neutral-400">&rarr;</span>
+                </button>
+
+                {CATEGORIES.map((cat) => (
+                  <button 
+                    key={cat.id}
+                    onClick={() => handleNavClick(cat.id)}
+                    className="flex items-center gap-3 text-left py-2.5 px-3 rounded-xl hover:bg-neutral-50 border-b border-neutral-100 transition-colors group"
+                  >
+                    <img 
+                      src={cat.image} 
+                      alt={cat.name} 
+                      className="w-10 h-10 rounded-lg object-cover shadow-sm group-hover:scale-105 transition-transform" 
+                      referrerPolicy="no-referrer"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=400&q=80';
+                      }}
+                    />
+                    <div className="flex-1">
+                      <span className="block font-heading font-bold text-sm text-neutral-900 group-hover:text-[#E91E63]">{cat.name}</span>
+                      <span className="text-[10px] text-neutral-500">{cat.count}</span>
+                    </div>
+                    <span className="text-xs text-neutral-400">&rarr;</span>
+                  </button>
+                ))}
+
+                <button 
+                  onClick={() => { setSelectedCategory('all'); setView('shop'); setMobileMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }} 
+                  className="text-left font-bold text-sm text-[#E91E63] py-3 px-4 rounded-xl bg-pink-50 hover:bg-pink-100 flex items-center justify-between mt-1"
+                >
+                  <span>✨ All Collections & Flash Sale</span>
+                  <span>&rarr;</span>
                 </button>
                 <button 
-                  onClick={() => handleNavClick('women')} 
-                  className="text-left font-medium text-lg text-neutral-800 py-2 border-b border-neutral-100"
+                  onClick={() => { setView('contact'); setMobileMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }} 
+                  className="text-left font-semibold text-sm text-neutral-800 py-3 px-4 rounded-xl bg-neutral-50 hover:bg-neutral-100 flex items-center justify-between"
                 >
-                  Women's Fashion
-                </button>
-                <button 
-                  onClick={() => handleNavClick('men')} 
-                  className="text-left font-medium text-lg text-neutral-800 py-2 border-b border-neutral-100"
-                >
-                  Men's Tailoring
-                </button>
-                <button 
-                  onClick={() => handleNavClick('shoes')} 
-                  className="text-left font-medium text-lg text-neutral-800 py-2 border-b border-neutral-100"
-                >
-                  Luxury Shoes
-                </button>
-                <button 
-                  onClick={() => handleNavClick('bags')} 
-                  className="text-left font-medium text-lg text-neutral-800 py-2 border-b border-neutral-100"
-                >
-                  Bags & Luggage
-                </button>
-                <button 
-                  onClick={() => handleNavClick('accessories')} 
-                  className="text-left font-medium text-lg text-neutral-800 py-2 border-b border-neutral-100"
-                >
-                  Accessories
-                </button>
-                <button 
-                  onClick={() => handleNavClick('kids')} 
-                  className="text-left font-medium text-lg text-neutral-800 py-2 border-b border-neutral-100"
-                >
-                  Kids Royal Wear
-                </button>
-                <button 
-                  onClick={() => { setSelectedCategory('all'); setView('shop'); setMobileMenuOpen(false); }} 
-                  className="text-left font-bold text-lg text-[#E91E63] py-2 border-b border-neutral-100"
-                >
-                  Flash Sale & New Arrivals ✨
-                </button>
-                <button 
-                  onClick={() => { setView('contact'); setMobileMenuOpen(false); }} 
-                  className="text-left font-medium text-lg text-neutral-800 py-2 border-b border-neutral-100"
-                >
-                  Contact & Abuja Showroom
+                  <span>📍 Contact & Abuja Showroom</span>
+                  <span>&rarr;</span>
                 </button>
               </div>
 
-              <div className="pt-4 flex flex-col gap-3">
+              <div className="p-4 border-t border-neutral-100 bg-neutral-50/50 flex flex-col gap-2.5">
                 <button 
                   onClick={() => {
                     if (user) {
@@ -365,7 +370,7 @@ export const Navbar: React.FC = () => {
                     }
                     setMobileMenuOpen(false);
                   }}
-                  className="w-full bg-[#6A1B9A] text-white py-3 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 shadow-md"
+                  className="w-full bg-[#6A1B9A] text-white py-3 rounded-xl font-semibold text-xs flex items-center justify-center gap-2 shadow-md"
                 >
                   <User className="w-4 h-4" />
                   <span>{user ? 'My Customer Dashboard' : 'Sign In / Register'}</span>
@@ -374,14 +379,14 @@ export const Navbar: React.FC = () => {
                   href="https://wa.me/2349031355416" 
                   target="_blank" 
                   rel="noreferrer"
-                  className="w-full bg-emerald-600 text-white py-3 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 shadow-md"
+                  className="w-full bg-emerald-600 text-white py-3 rounded-xl font-semibold text-xs flex items-center justify-center gap-2 shadow-md"
                 >
                   <Phone className="w-4 h-4" />
                   <span>WhatsApp Support (+234 903 135 5416)</span>
                 </a>
               </div>
-            </div>
-          </motion.div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </header>
