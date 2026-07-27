@@ -1,0 +1,6 @@
+{
+  "name": "Global Wealth Store",
+  "description": "Luxury Fashion & Accessories eCommerce Store in Nigeria",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
