@@ -157,7 +157,6 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const saved = localStorage.getItem('gws_products');
     if (saved) {
       const parsed = JSON.parse(saved);
-      // Ensure public products are included if not already present
       const existingIds = new Set(parsed.map((p: Product) => p.id));
       const missingPublic = PUBLIC_FOLDER_PRODUCTS.filter(p => !existingIds.has(p.id));
       return [...missingPublic, ...parsed];
